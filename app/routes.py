@@ -13,6 +13,11 @@ def index() -> str:
     """Renders the landing page."""
     return render_template("landing.html")
 
+@bp.route("/docs", methods=["GET"])
+def docs() -> str:
+    """Renders the documentation page."""
+    return render_template("docs.html")
+
 @bp.route("/create-room", methods=["POST", "GET"])
 def create_room():
     """Generates a new room code and redirects to the room page."""

@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Documentation | Beamly⚡{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 py-4">
+    
+    <!-- Left Column: Navigation Index -->
+    <nav class="lg:col-span-3 flex flex-col gap-3 lg:sticky lg:top-24 h-fit select-none">
+        <h2 class="text-xl font-black uppercase border-b-3 border-neoBlack pb-2 mb-2">Docs Index</h2>
+        <a href="#overview" class="btn-neo-white btn-neo text-left font-bold py-2 px-4 text-sm hover:bg-neoYellow">
+            ⚡ OVERVIEW
+        </a>
+        <a href="#how-it-works" class="btn-neo-white btn-neo text-left font-bold py-2 px-4 text-sm hover:bg-neoYellow">
+            📖 HOW TO USE
+        </a>
+        <a href="#webrtc-signaling" class="btn-neo-white btn-neo text-left font-bold py-2 px-4 text-sm hover:bg-neoYellow">
+            🤝 WEBRTC SIGNALING
+        </a>
+        <a href="#chunking-backpressure" class="btn-neo-white btn-neo text-left font-bold py-2 px-4 text-sm hover:bg-neoYellow">
+            📦 CHUNKING & BUFFERING
+        </a>
+        <a href="#security-privacy" class="btn-neo-white btn-neo text-left font-bold py-2 px-4 text-sm hover:bg-neoYellow">
+            🔒 SECURITY & PRIVACY
+        </a>
+        <a href="#developer-setup" class="btn-neo-white btn-neo text-left font-bold py-2 px-4 text-sm hover:bg-neoYellow">
+            🛠️ DEVELOPER SETUP
+        </a>
+    </nav>
+
+    <!-- Right Column: Reading Panels -->
+    <div class="lg:col-span-9 flex flex-col gap-8 scroll-smooth">
+        
+        <!-- Overview Section -->
+        <section id="overview" class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h1 class="text-4xl font-black uppercase border-b-3 border-neoBlack pb-2">Overview</h1>
+            <p class="font-semibold text-gray-700 leading-relaxed">
+                Beamly is a modern, production-quality peer-to-peer file transfer example. By utilizing browser-native WebRTC standards, Beamly achieves true browser-to-browser transfers:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+                <div class="border-3 border-neoBlack p-4 bg-neoYellow shadow-neo-sm font-bold">
+                    <p class="font-black text-lg mb-1 uppercase">100% Serverless Payloads</p>
+                    <p class="text-sm text-gray-800">Your files are never uploaded, cached, or buffered on the backend server. They stream directly from disk to disk.</p>
+                </div>
+                <div class="border-3 border-neoBlack p-4 bg-neoBlue shadow-neo-sm font-bold">
+                    <p class="font-black text-lg mb-1 uppercase">Mandatory Encryption</p>
+                    <p class="text-sm text-gray-800">All data streams are encrypted out-of-band using DTLS-SRTP, rendering payloads unreadable to middleboxes or hosting routers.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How it Works Section -->
+        <section id="how-it-works" class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h2 class="text-3xl font-black uppercase border-b-3 border-neoBlack pb-2">How to Use Beamly</h2>
+            <ol class="flex flex-col gap-4 font-semibold text-gray-700 list-decimal pl-5">
+                <li>
+                    <strong class="text-neoBlack uppercase">Create a Room</strong>: Click the 
+                    <span class="bg-neoPink text-neoWhite px-2 py-0.5 border-2 border-neoBlack text-xs font-black">CREATE TRANSFER ROOM</span> 
+                    button on the landing page to initialize a single-use room.
+                </li>
+                <li>
+                    <strong class="text-neoBlack uppercase">Connect Devices</strong>: Share the generated room link or scan the dynamic SVG QR code on a second browser (e.g. your phone).
+                </li>
+                <li>
+                    <strong class="text-neoBlack uppercase">Queue and Transfer</strong>: Once the connection state shifts to <span class="bg-neoGreen text-neoBlack px-2 py-0.5 border-2 border-neoBlack text-xs font-black">CONNECTED</span>, drag-drop files or paste screenshots directly from your clipboard.
+                </li>
+                <li>
+                    <strong class="text-neoBlack uppercase">Save Files</strong>: The receiver will dynamically reconstruct incoming chunks in the background and reveal a yellow <span class="bg-neoYellow text-neoBlack px-2 py-0.5 border-2 border-neoBlack text-xs font-black">Save</span> button to download the file locally.
+                </li>
+            </ol>
+        </section>
+
+        <!-- WebRTC Signaling Section -->
+        <section id="webrtc-signaling" class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h2 class="text-3xl font-black uppercase border-b-3 border-neoBlack pb-2">WebRTC & Signaling</h2>
+            <p class="font-semibold text-gray-700 leading-relaxed">
+                Before two browsers can stream data directly, they must coordinate how to reach each other. This is the only responsibility of the Flask server, which coordinates signaling events using <strong>Socket.IO</strong>:
+            </p>
+            <div class="border-3 border-neoBlack bg-gray-50 p-4 font-mono text-xs overflow-x-auto">
+                <p class="font-bold text-neoPink">// Signaling lifecycle handshake stages:</p>
+                <p class="mt-2">1. Client A joins room -> server assigns role "initiator"</p>
+                <p>2. Client B joins room -> server assigns role "joiner"</p>
+                <p>3. Server broadcasts "peer_joined" to Client A</p>
+                <p>4. Client A creates RTCPeerConnection, mounts DataChannel, creates SDP offer</p>
+                <p>5. Client A sends SDP offer to Server -> Server relays to Client B</p>
+                <p>6. Client B receives offer, applies it, creates SDP answer -> Server relays to Client A</p>
+                <p>7. Both exchange ICE Candidates locally gathered via STUN servers to complete routing path</p>
+            </div>
+            <div class="bg-neoYellow border-3 border-neoBlack p-4 font-bold text-sm shadow-neo-sm">
+                💡 <strong>ICE Candidate Queueing</strong>: To prevent race conditions, incoming ICE candidates received before the remote session description is fully configured are buffered in an array and flushed immediately after description binding completes.
+            </div>
+        </section>
+
+        <!-- Chunking & Backpressure Section -->
+        <section id="chunking-backpressure" class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h2 class="text-3xl font-black uppercase border-b-3 border-neoBlack pb-2">Chunking & Backpressure</h2>
+            <p class="font-semibold text-gray-700 leading-relaxed">
+                WebRTC data channels work best when files are split into small, manageable chunks rather than sent as one large buffer. Beamly divides files into **64 KiB chunks** on-the-fly.
+            </p>
+            <h3 class="text-lg font-black uppercase">Solving Buffer Overflows (Backpressure)</h3>
+            <p class="font-semibold text-gray-700 leading-relaxed">
+                Browsers queue outgoing messages in an internal buffer. If a file is loaded and sent too fast, the socket buffer overflows, causing connection dropouts. Beamly implements a high/low water backpressure listener:
+            </p>
+            <div class="border-3 border-neoBlack bg-gray-50 p-4 font-mono text-xs overflow-x-auto">
+                <p class="text-gray-500">// Backpressure monitoring flow inside sender.js</p>
+                <p>const HIGH_WATER_MARK = 1 * 1024 * 1024; // 1 MiB</p>
+                <p>const LOW_WATER_MARK = 64 * 1024; // 64 KiB</p>
+                <p class="mt-2">while (offset < file.size) {</p>
+                <p>&nbsp;&nbsp;if (channel.bufferedAmount > HIGH_WATER_MARK) {</p>
+                <p class="text-neoPink">&nbsp;&nbsp;&nbsp;&nbsp;// Buffer full. Await the low water event listener before proceeding!</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;await new Promise(resolve => {</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;channel.addEventListener('bufferedamountlow', resolve, { once: true });</p>
+                <p>&nbsp;&nbsp;&nbsp;&nbsp;});</p>
+                <p>&nbsp;&nbsp;}</p>
+                <p>&nbsp;&nbsp;// Slice and send next chunk...</p>
+                <p>}</p>
+            </div>
+        </section>
+
+        <!-- Security & Privacy Section -->
+        <section id="security-privacy" class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h2 class="text-3xl font-black uppercase border-b-3 border-neoBlack pb-2">Security & Privacy</h2>
+            <p class="font-semibold text-gray-700 leading-relaxed">
+                Privacy is a first-class citizen in Beamly's design:
+            </p>
+            <ul class="flex flex-col gap-2 font-bold text-gray-800 list-disc pl-5">
+                <li><strong class="uppercase text-neoBlack">No Logs</strong>: No databases store transfer transactions. Session logs are transient inside server console memories.</li>
+                <li><strong class="uppercase text-neoBlack">Ephemeral Rooms</strong>: Active room keys are deleted from memory the second both devices close the browser window.</li>
+                <li><strong class="uppercase text-neoBlack">Out-of-Band Keys</strong>: WebRTC keys are negotiated directly between endpoints, ensuring intermediate proxies cannot inspect payloads.</li>
+                <li><strong class="uppercase text-neoBlack">XSS / Path Traversal Protections</strong>: Filenames are sanitized on the receiver end using regex filters to strip directory traversal injections (`../`).</li>
+            </ul>
+        </section>
+
+        <!-- Developer Setup Section -->
+        <section id="developer-setup" class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h2 class="text-3xl font-black uppercase border-b-3 border-neoBlack pb-2">Developer Setup</h2>
+            <p class="font-semibold text-gray-700 leading-relaxed">
+                If you are running the project locally or preparing to contribute, execute the following commands:
+            </p>
+            <div class="border-3 border-neoBlack bg-gray-50 p-4 font-mono text-xs overflow-x-auto">
+                <p class="text-gray-500"># 1. Clone and enter directory</p>
+                <p>git clone git@github.com:phcodesage/beamly.git</p>
+                <p>cd beamly</p>
+                <p class="mt-2 text-gray-500"># 2. Build Tailwind CSS files</p>
+                <p>npm install</p>
+                <p>npm run build:css</p>
+                <p class="mt-2 text-gray-500"># 3. Create virtual environment and install packages</p>
+                <p>python3.11 -m venv venv</p>
+                <p>source venv/bin/activate</p>
+                <p>pip install -r requirements.txt</p>
+                <p class="mt-2 text-gray-500"># 4. Launch the application</p>
+                <p>python run.py</p>
+            </div>
+            <p class="font-semibold text-gray-700">
+                For contribution guidelines and PR structures, check out our <a href="/contributing" class="underline hover:text-neoPink text-neoBlack font-black">CONTRIBUTING.md</a> file.
+            </p>
+        </section>
+
+    </div>
+</div>
+{% endblock %}
