@@ -179,13 +179,13 @@
                     
                     // Reset all links: remove active styling, shift translations, and shadows
                     navLinks.forEach(link => {
-                        link.classList.remove('!bg-neoYellow', '-translate-x-[2px]', '-translate-y-[2px]', 'shadow-neo-lg');
+                        link.classList.remove('!bg-neoPink', '!text-neoWhite', '-translate-x-[2px]', '-translate-y-[2px]', 'shadow-neo-lg');
                     });
 
                     // Apply active styling to current visible section link
                     const activeLink = document.querySelector(`nav a[href="#${id}"]`);
                     if (activeLink) {
-                        activeLink.classList.add('!bg-neoYellow', '-translate-x-[2px]', '-translate-y-[2px]', 'shadow-neo-lg');
+                        activeLink.classList.add('!bg-neoPink', '!text-neoWhite', '-translate-x-[2px]', '-translate-y-[2px]', 'shadow-neo-lg');
                     }
                 }
             });
