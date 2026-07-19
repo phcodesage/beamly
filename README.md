@@ -200,6 +200,16 @@ Contributions are open for the following roadmap features (labeled `TODO` in cod
 
 ---
 
+## 🤝 Contributing
+
+We welcome open-source contributions of all kinds! Whether you are fixing bugs, improving the Neo-Brutalist UI, or implementing features from the roadmap, we'd love your help.
+
+1. Review the [CHECKLIST.md](CHECKLIST.md) progress tracker to find active tasks and open ideas.
+2. Read the [CONTRIBUTING.md](CONTRIBUTING.md) guide for step-by-step setup instructions.
+3. Open a Pull Request or create an Issue to discuss your planned changes.
+
+---
+
 ## 📄 License
 
 Beamly is open-source software licensed under the [MIT License](LICENSE).
