@@ -4,14 +4,14 @@
 [![Python Version](https://img.shields.io/badge/Python-3.9+-blue.svg)](requirements.txt)
 [![TailwindCSS](https://img.shields.io/badge/Tailwind-3.4-pink.svg)](tailwind.config.js)
 
-**Beamly** is a modern, production-quality, open-source peer-to-peer (P2P) file transfer application. Built with **Flask, Jinja2, TailwindCSS (Neo-Brutalism)**, and native browser **WebRTC DataChannels**, it enables secure, fast, and serverless transfers directly between two devices.
+**Beamly** is a modern, production-quality, open-source peer-to-peer (P2P) file transfer application. Built with **Flask, Jinja2, TailwindCSS (Neo-Brutalism)**, and native browser **WebRTC DataChannels**, it enables **100% free, end-to-end encrypted (E2EE)**, fast, and serverless transfers directly between two devices.
 
-The Flask backend acts **strictly as a signaling coordinator**—file data never touches the server.
+The Flask backend acts **strictly as a signaling coordinator**—file data is encrypted using DTLS-SRTP and transferred directly browser-to-browser. **Files never touch or store on the server.**
 
 ---
 
 ## ⚡ Tagline
-> **"Peer-to-peer file transfer. No cloud. No account."**
+> **"100% Free Peer-to-Peer Transfer. Securely Encrypted. No Cloud. No Account."**
 
 ---
 
