@@ -1,2 +1,17 @@
+[project]
+name = "beamly"
+version = "1.0.0"
+description = "Peer-to-peer file transfer. No cloud. No account."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "Flask==3.0.3",
+    "Flask-SocketIO==5.3.6",
+    "eventlet==0.36.1",
+    "python-dotenv==1.0.1",
+    "qrcode[pil]==7.4.2",
+    "gunicorn==22.0.0"
+]
+
 [tool.vercel]
 entrypoint = "run:app"
