@@ -159,3 +159,41 @@
     </div>
 </div>
 {% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '-35% 0px -45% 0px', // Trigger when section is in active view area
+            threshold: 0
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    
+                    // Reset all links: remove active styling, shift translations, and shadows
+                    navLinks.forEach(link => {
+                        link.classList.remove('!bg-neoYellow', '-translate-x-[2px]', '-translate-y-[2px]', 'shadow-neo-lg');
+                    });
+
+                    // Apply active styling to current visible section link
+                    const activeLink = document.querySelector(`nav a[href="#${id}"]`);
+                    if (activeLink) {
+                        activeLink.classList.add('!bg-neoYellow', '-translate-x-[2px]', '-translate-y-[2px]', 'shadow-neo-lg');
+                    }
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+    });
+</script>
+{% endblock %}
