@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  beamly:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: beamly-app
+    restart: unless-stopped
+    ports:
+      - "5001:5001"
+    environment:
+      - SECRET_KEY=beamly-secure-production-key-change-me
+      - HOST=0.0.0.0
+      - PORT=5001
+      - ROOM_EXPIRATION_SECONDS=3600
+      - MAX_FILE_SIZE_MB=10240
+    # Enable volume mapping during development to hot-reload changes (exclude node_modules / pycache)
+    # Note: Using volumes requires local CSS builds or running in dev mode
+    # volumes:
+    #   - .:/app

@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #FFE600; /* Default neoYellow background */
+    font-family: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #000000;
+  }
+
+  /* Custom outline for focus to keep Neo-Brutalist theme */
+  *:focus-visible {
+    outline: 3px solid #FF007A; /* neoPink focus */
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Neo-Brutalist Button */
+  .btn-neo {
+    @apply border-3 border-neoBlack bg-neoWhite text-neoBlack font-bold py-2 px-4 shadow-neo transition-all duration-150 select-none;
+  }
+  .btn-neo:hover {
+    @apply -translate-x-[2px] -translate-y-[2px] shadow-neo-lg;
+  }
+  .btn-neo:active {
+    @apply translate-x-[2px] translate-y-[2px] shadow-neo-sm;
+  }
+
+  .btn-neo-yellow {
+    @apply btn-neo bg-neoYellow;
+  }
+  .btn-neo-blue {
+    @apply btn-neo bg-neoBlue;
+  }
+  .btn-neo-pink {
+    @apply btn-neo bg-neoPink text-neoWhite;
+  }
+  .btn-neo-green {
+    @apply btn-neo bg-neoGreen;
+  }
+
+  /* Neo-Brutalist Card */
+  .card-neo {
+    @apply border-3 border-neoBlack bg-neoWhite p-6 shadow-neo;
+  }
+
+  /* Neo-Brutalist Input */
+  .input-neo {
+    @apply border-3 border-neoBlack bg-neoWhite py-2 px-4 font-semibold text-neoBlack shadow-neo-sm focus:outline-none focus:ring-0 placeholder:text-gray-500;
+  }
+
+  /* Custom progress bar wrapper */
+  .progress-neo-container {
+    @apply border-3 border-neoBlack bg-neoWhite h-6 w-full shadow-neo-sm relative overflow-hidden;
+  }
+  .progress-neo-bar {
+    @apply h-full bg-neoPink border-r-3 border-neoBlack transition-all duration-300;
+  }
+
+  /* Toast Notification */
+  .toast-neo {
+    @apply border-3 border-neoBlack bg-neoWhite p-4 shadow-neo flex items-center gap-3 font-bold select-none;
+  }
+}
+
+/* Custom Scrollbar for Neo-Brutalist feel */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+::-webkit-scrollbar-track {
+  background: #FFFFFF;
+  border-left: 3px solid #000000;
+}
+::-webkit-scrollbar-thumb {
+  background: #000000;
+  border: 2px solid #FFFFFF;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF007A;
+}

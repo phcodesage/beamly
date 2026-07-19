@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Room {{ room_code }} | Beamly⚡{% endblock %}
+
+{% block extra_head %}
+<!-- Font Awesome or Google Icons for UI if needed - we'll use inline SVGs to avoid dependencies -->
+{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 py-4">
+    
+    <!-- Left Column: Room & Connection Details -->
+    <div class="lg:col-span-4 flex flex-col gap-6">
+        
+        <!-- Room Code Card -->
+        <div class="card-neo bg-neoWhite flex flex-col gap-4">
+            <h2 class="text-xl font-black uppercase border-b-3 border-neoBlack pb-2">Room Info</h2>
+            
+            <div class="flex flex-col gap-1">
+                <span class="font-extrabold text-xs text-gray-500 uppercase">ROOM CODE</span>
+                <div class="flex items-center gap-2">
+                    <span id="roomCodeDisplay" class="text-3xl font-black tracking-wider text-neoBlack select-all bg-neoYellow border-3 border-neoBlack px-3 py-1 w-full text-center">
+                        {{ room_code }}
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button onclick="copyRoomLink()" class="btn-neo-white btn-neo w-full flex items-center justify-center gap-2 font-bold py-2.5">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"></path>
+                    </svg>
+                    COPY SHARE LINK
+                </button>
+            </div>
+
+            <!-- Status Badge -->
+            <div class="flex flex-col gap-1">
+                <span class="font-extrabold text-xs text-gray-500 uppercase">CONNECTION STATUS</span>
+                <div id="connectionStatusBadge" class="border-3 border-neoBlack bg-neoYellow text-neoBlack px-4 py-2 font-extrabold text-center uppercase shadow-neo-sm">
+                    WAITING FOR PEER...
+                </div>
+            </div>
+            
+            <!-- Peer Info Panel -->
+            <div id="peerInfoPanel" class="hidden flex-col gap-1 border-t-3 border-neoBlack pt-4 mt-2">
+                <span class="font-extrabold text-xs text-gray-500 uppercase">CONNECTED DEVICE</span>
+                <div class="flex items-center gap-3 bg-gray-100 border-3 border-neoBlack p-3 font-bold text-sm">
+                    <svg class="w-8 h-8 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                    </svg>
+                    <div>
+                        <p id="peerDeviceName" class="font-black uppercase tracking-tight">UNKNOWN DEVICE</p>
+                        <p id="peerBrowserName" class="text-xs text-gray-500 uppercase">WAITING FOR HANDSHAKE</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- QR Code Card -->
+        <div class="card-neo bg-neoWhite flex flex-col items-center gap-4 text-center">
+            <h3 class="text-lg font-black uppercase w-full text-left border-b-3 border-neoBlack pb-2">Scan QR Code</h3>
+            <p class="text-xs font-bold text-gray-600 uppercase w-full text-left leading-normal">
+                Scan this code on a mobile device or secondary browser to connect directly.
+            </p>
+            <div class="border-3 border-neoBlack bg-white p-2 shadow-neo-sm transform hover:scale-105 transition-all duration-200">
+                <img src="/qr/{{ room_code }}" alt="QR Code for Room {{ room_code }}" class="w-48 h-48 block select-none">
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Drag and Drop & Transfer Queue -->
+    <div class="lg:col-span-8 flex flex-col gap-6">
+        
+        <!-- Drag & Drop Zone -->
+        <div id="transferPanel" class="card-neo bg-neoWhite flex flex-col gap-6 min-h-[300px] justify-between relative transition-all duration-200">
+            
+            <!-- Connection overlay (shields dropzone until peers are connected) -->
+            <div id="connectionOverlay" class="absolute inset-0 bg-neoYellow bg-opacity-95 z-10 flex flex-col items-center justify-center p-8 text-center border-3 border-neoBlack">
+                <div class="animate-bounce text-6xl mb-4">⚡</div>
+                <h3 class="text-3xl font-black uppercase text-neoBlack tracking-tight mb-2">WAITING FOR SECOND DEVICE</h3>
+                <p class="text-md font-bold text-neoBlack max-w-md uppercase leading-relaxed">
+                    To start transferring, open the share link on another device or secondary tab. Keep this page open.
+                </p>
+                <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                    <button onclick="copyRoomLink()" class="btn-neo bg-neoWhite font-bold uppercase py-2 px-6">
+                        Copy Link
+                    </button>
+                    <button onclick="window.open(window.location.href, '_blank')" class="btn-neo btn-neo-blue font-bold uppercase py-2 px-6">
+                        Open New Tab
+                    </button>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <div class="flex justify-between items-center border-b-3 border-neoBlack pb-4">
+                <h2 class="text-2xl font-black uppercase">Share Files</h2>
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-black uppercase bg-neoGreen border-3 border-neoBlack py-1 px-2.5 shadow-neo-sm">
+                        SECURE WebRTC
+                    </span>
+                </div>
+            </div>
+
+            <!-- Drop Zone Area -->
+            <div id="dropZone" class="flex-grow border-4 border-dashed border-neoBlack bg-gray-50 flex flex-col items-center justify-center p-8 text-center cursor-pointer hover:bg-yellow-50 hover:border-neoPink transition-all duration-150 relative">
+                <input type="file" id="filePicker" multiple class="hidden">
+                
+                <svg class="w-16 h-16 mb-4 text-neoBlack" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                </svg>
+                
+                <h3 class="text-xl font-black uppercase tracking-tight mb-1">Drag & Drop Files Here</h3>
+                <p class="text-xs font-bold text-gray-500 uppercase max-w-sm mb-4">
+                    Or click to browse from device. You can also paste screenshot images directly from clipboard.
+                </p>
+                
+                <button onclick="document.getElementById('filePicker').click()" class="btn-neo-yellow btn-neo font-bold px-6 py-2">
+                    SELECT FILES
+                </button>
+            </div>
+            
+            <p class="text-xs font-black text-gray-500 uppercase text-center mt-2">
+                🔒 Files are encrypted end-to-end and transferred directly. They never touch the server.
+            </p>
+        </div>
+
+        <!-- Transfer Queue Panel -->
+        <div id="queuePanel" class="card-neo bg-neoWhite hidden flex-col gap-4">
+            <div class="flex justify-between items-center border-b-3 border-neoBlack pb-3">
+                <h3 class="text-lg font-black uppercase">Transfer Queue</h3>
+                <span id="queueCount" class="font-extrabold text-xs bg-neoBlack text-neoWhite py-1 px-2 uppercase tracking-wide">
+                    0 Files Active
+                </span>
+            </div>
+
+            <!-- List of Queue Items -->
+            <div id="queueList" class="flex flex-col gap-4 max-h-[400px] overflow-y-auto pr-2">
+                <!-- Dynamically populated files -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Template for a queue item -->
+<template id="queueItemTemplate">
+    <div class="border-3 border-neoBlack p-4 bg-neoWhite flex flex-col gap-3 relative shadow-neo-sm" data-file-id="">
+        <div class="flex justify-between items-start gap-4">
+            <div class="flex items-center gap-3">
+                <div class="file-type-icon border-3 border-neoBlack p-2 bg-neoYellow font-black text-md select-none">
+                    TXT
+                </div>
+                <div class="overflow-hidden">
+                    <h4 class="font-extrabold text-base uppercase truncate max-w-md file-name">filename.txt</h4>
+                    <p class="text-xs font-bold text-gray-500 uppercase file-size-info">0 B / 0 B</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="file-direction border-3 border-neoBlack bg-neoBlue text-neoBlack px-2 py-0.5 text-xs font-black uppercase shadow-neo-sm">
+                    SENDING
+                </span>
+                <button class="btn-cancel font-black text-2xl hover:text-neoPink focus:outline-none" title="Cancel Transfer">
+                    &times;
+                </button>
+            </div>
+        </div>
+
+        <!-- Progress and metrics -->
+        <div class="flex flex-col gap-1.5">
+            <div class="flex justify-between items-center text-xs font-extrabold text-gray-600 uppercase">
+                <span class="file-speed">Speed: 0 KB/s</span>
+                <span class="file-eta">ETA: Calculating...</span>
+                <span class="file-percent">0%</span>
+            </div>
+            <!-- Progress Bar -->
+            <div class="progress-neo-container">
+                <div class="progress-neo-bar w-0"></div>
+            </div>
+        </div>
+    </div>
+</template>
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Global Application State & Room Config variables -->
+<script>
+    window.BEAMLY_ROOM = {
+        code: "{{ room_code }}",
+        joinUrl: "{{ join_url }}"
+    };
+</script>
+
+<!-- Load Beamly WebRTC & UI scripts -->
+<script src="{{ url_for('static', filename='js/signaling.js') }}"></script>
+<script src="{{ url_for('static', filename='js/rtc.js') }}"></script>
+<script src="{{ url_for('static', filename='js/sender.js') }}"></script>
+<script src="{{ url_for('static', filename='js/receiver.js') }}"></script>
+<script src="{{ url_for('static', filename='js/connection.js') }}"></script>
+<script src="{{ url_for('static', filename='js/ui.js') }}"></script>
+
+<script>
+    // Copy room link to clipboard
+    function copyRoomLink() {
+        const link = window.BEAMLY_ROOM.joinUrl;
+        navigator.clipboard.writeText(link).then(() => {
+            if (window.showToast) {
+                window.showToast('SUCCESS', 'Share link copied to clipboard!');
+            } else {
+                alert('Copied link: ' + link);
+            }
+        }).catch(err => {
+            console.error('Failed to copy room link: ', err);
+        });
+    }
+</script>
+{% endblock %}

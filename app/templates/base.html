@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Beamly | Peer-to-Peer File Transfer{% endblock %}</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Secure, serverless peer-to-peer file transfer directly in your browser. No registration, no storage limits, files never touch the server. Powered by WebRTC.">
+    <meta name="keywords" content="webrtc, file transfer, peer-to-peer, p2p, web socket, flask, tailwindcss, neo brutalism">
+    <meta name="author" content="Beamly Open Source Community">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Beamly - Peer-to-Peer File Transfer">
+    <meta property="og:description" content="Secure, serverless peer-to-peer file transfer directly in your browser. No registration, no storage limits, files never touch the server. Powered by WebRTC.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Compiled Tailwind CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    
+    <!-- Socket.IO Client -->
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9FMqQAVVfnC6SyoqvRyDc38D82Gwq9eOIk3OPW8ZG5MCAMknqjWDdQGP" crossorigin="anonymous"></script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="bg-neoYellow min-h-screen flex flex-col transition-colors duration-200">
+    <!-- Top Navigation Bar -->
+    <header class="border-b-3 border-neoBlack bg-neoWhite py-4 px-6 md:px-12 flex justify-between items-center select-none shadow-[0_3px_0_0_#000]">
+        <a href="{{ url_for('main.index') }}" class="flex items-center gap-3 group focus-visible:outline-none">
+            <div class="bg-neoPink text-neoWhite border-3 border-neoBlack px-3 py-1 font-black text-2xl tracking-tighter shadow-neo-sm transform group-hover:-translate-y-0.5 group-hover:-translate-x-0.5 group-hover:shadow-neo transition-all duration-100">
+                BEAMLY⚡
+            </div>
+            <span class="font-extrabold text-xl tracking-tight hidden sm:inline">P2P TRANSFER</span>
+        </a>
+        
+        <div class="flex items-center gap-4">
+            <a href="https://github.com/example/beamly" target="_blank" rel="noopener noreferrer" class="btn-neo-white btn-neo flex items-center gap-2 py-1.5 px-3.5 text-sm">
+                <!-- GitHub Icon -->
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482C19.138 20.193 22 16.44 22 12.017 22 6.484 17.522 2 12 2z" />
+                </svg>
+                <span class="hidden md:inline font-bold">GitHub</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow flex flex-col p-6 md:p-12 max-w-7xl mx-auto w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Neo-Brutalist Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm w-full"></div>
+
+    <!-- Footer -->
+    <footer class="border-t-3 border-neoBlack bg-neoWhite py-6 px-6 md:px-12 flex flex-col md:flex-row justify-between items-center select-none shadow-[0_-3px_0_0_#000] mt-auto">
+        <div class="font-extrabold text-sm mb-4 md:mb-0">
+            © 2026 BEAMLY. OPEN-SOURCE UNDER THE MIT LICENSE.
+        </div>
+        <div class="flex gap-6 font-bold text-sm">
+            <a href="https://github.com/example/beamly/blob/main/CONTRIBUTING.md" class="hover:underline hover:text-neoPink decoration-2">CONTRIBUTING</a>
+            <a href="https://github.com/example/beamly/blob/main/LICENSE" class="hover:underline hover:text-neoPink decoration-2">LICENSE</a>
+            <a href="https://github.com/example/beamly" class="hover:underline hover:text-neoPink decoration-2">DOCUMENTATION</a>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>
