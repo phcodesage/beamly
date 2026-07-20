@@ -1,12 +1,55 @@
-from flask import Blueprint, render_template, redirect, url_for, request, abort, Response
+import urllib.request
+import json
+from flask import Blueprint, render_template, redirect, url_for, request, abort, Response, jsonify
 from app.services.room_manager import room_manager
 from app.utils.helpers import validate_room_code
+from config import Config
 import qrcode
 import qrcode.image.svg
 import io
 
 # Initialize Blueprint
 bp = Blueprint("main", __name__)
+
+@bp.route("/api/ice-servers", methods=["GET"])
+def get_ice_servers():
+    """
+    Dynamically generates and returns WebRTC ICE servers configuration.
+    Fetches short-lived TURN credentials from Cloudflare Calls API.
+    """
+    default_stun = [
+        {"urls": "stun:stun.l.google.com:19302"},
+        {"urls": "stun:stun1.l.google.com:19302"},
+        {"urls": "stun:stun2.l.google.com:19302"}
+    ]
+    
+    key_id = Config.CLOUDFLARE_TURN_KEY_ID
+    token = Config.CLOUDFLARE_TURN_API_TOKEN
+    
+    if key_id and token:
+        try:
+            url = f"https://rtc.live.cloudflare.com/v1/turn/keys/{key_id}/credentials/generate-ice-servers"
+            req = urllib.request.Request(
+                url,
+                data=json.dumps({"ttl": 86400}).encode("utf-8"),
+                headers={
+                    "Authorization": f"Bearer {token}",
+                    "Content-Type": "application/json"
+                },
+                method="POST"
+            )
+            with urllib.request.urlopen(req, timeout=5) as response:
+                payload = json.loads(response.read().decode("utf-8"))
+                cf_servers = payload.get("iceServers")
+                
+                if cf_servers:
+                    servers_list = [cf_servers] if isinstance(cf_servers, dict) else cf_servers
+                    return jsonify({"iceServers": servers_list + default_stun})
+        except Exception as e:
+            print(f"[Routes] Failed to fetch Cloudflare TURN credentials: {e}")
+            
+    return jsonify({"iceServers": default_stun})
+
 
 @bp.route("/", methods=["GET"])
 def index() -> str:

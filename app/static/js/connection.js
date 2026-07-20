@@ -60,7 +60,7 @@ class ConnectionCoordinator {
     /**
      * Callback when this client joins the room.
      */
-    _handleJoined(data) {
+    async _handleJoined(data) {
         this.role = data.role;
         console.log(`[Connection] Joined room ${data.room} as ${this.role}`);
         
@@ -68,18 +68,18 @@ class ConnectionCoordinator {
             this.onStateChange('waiting', 'Waiting for receiver to join...');
         } else {
             this.onStateChange('connecting', 'Receiver joined. Establishing P2P link...');
-            this._setupPeerConnection();
+            await this._setupPeerConnection();
         }
     }
 
     /**
      * Callback when a second peer joins (only called for initiator).
      */
-    _handlePeerJoined() {
+    async _handlePeerJoined() {
         console.log('[Connection] Receiver peer detected. Creating offer...');
         this.onStateChange('connecting', 'Receiver detected. Setting up P2P link...');
         
-        this._setupPeerConnection();
+        await this._setupPeerConnection();
         
         // Initiator creates data channel
         this._createDataChannel();
@@ -91,8 +91,10 @@ class ConnectionCoordinator {
     /**
      * Sets up the RTCPeerConnection and standard ICE/State event handlers.
      */
-    _setupPeerConnection() {
-        this.pc = RTCManager.createPeerConnection();
+    async _setupPeerConnection() {
+        const iceServers = await RTCManager.fetchIceServers();
+        this.pc = RTCManager.createPeerConnection({ iceServers: iceServers });
+
 
         // Send local ICE candidates to peer
         this.pc.addEventListener('icecandidate', (event) => {
@@ -286,14 +288,15 @@ class ConnectionCoordinator {
     /**
      * Retries connection setup on ICE negotiation failure.
      */
-    _retryConnection() {
+    async _retryConnection() {
         this._cleanupPeerConnection();
-        this._setupPeerConnection();
+        await this._setupPeerConnection();
         if (this.role === 'initiator') {
             this._createDataChannel();
             this._createOffer();
         }
     }
+
 
     /**
      * Cleans up RTCPeerConnection and DataChannel objects.

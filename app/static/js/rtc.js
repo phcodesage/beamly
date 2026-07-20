@@ -18,11 +18,35 @@ class RTCManager {
     }
 
     /**
+     * Dynamically fetches ICE servers from backend API (Cloudflare TURN + STUN).
+     * @returns {Promise<Array>}
+     */
+    static async fetchIceServers() {
+        try {
+            const backendUrl = (window.BACKEND_URL && window.BACKEND_URL.startsWith('http')) 
+                ? window.BACKEND_URL.replace(/\/$/, '') 
+                : '';
+            const response = await fetch(`${backendUrl}/api/ice-servers`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.iceServers && data.iceServers.length > 0) {
+                    console.log('[RTC] Fetched dynamic ICE servers:', data.iceServers);
+                    return data.iceServers;
+                }
+            }
+        } catch (err) {
+            console.warn('[RTC] Could not fetch dynamic ICE servers, using defaults:', err);
+        }
+        return RTCManager.DEFAULT_ICE_SERVERS;
+    }
+
+    /**
      * Creates and configures a new RTCPeerConnection instance.
      * @param {object} config - Custom WebRTC configurations (optional)
      * @returns {RTCPeerConnection}
      */
     static createPeerConnection(config = {}) {
+
         const iceServers = config.iceServers || RTCManager.DEFAULT_ICE_SERVERS;
         
         console.log('[RTC] Initializing RTCPeerConnection with servers:', iceServers);
