@@ -4,10 +4,10 @@
   "description": "Peer-to-peer file transfer. No cloud. No account.",
   "main": "run.py",
   "scripts": {
-    "build": "npm run build:css",
     "build:css": "tailwindcss -i ./app/static/css/src/main.css -o ./app/static/css/style.css --minify",
     "watch:css": "tailwindcss -i ./app/static/css/src/main.css -o ./app/static/css/style.css --watch"
   },
+
 
   "devDependencies": {
     "tailwindcss": "^3.4.1"
