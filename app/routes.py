@@ -34,7 +34,8 @@ def get_ice_servers():
                 data=json.dumps({"ttl": 86400}).encode("utf-8"),
                 headers={
                     "Authorization": f"Bearer {token}",
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "User-Agent": "Beamly/1.0 (WebRTC Signaling Coordinator)"
                 },
                 method="POST"
             )
@@ -45,6 +46,7 @@ def get_ice_servers():
                 if cf_servers:
                     servers_list = [cf_servers] if isinstance(cf_servers, dict) else cf_servers
                     return jsonify({"iceServers": servers_list + default_stun})
+
         except Exception as e:
             print(f"[Routes] Failed to fetch Cloudflare TURN credentials: {e}")
             
