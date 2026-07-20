@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: beamly
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FLASK_ENV
+        value: production
+      - key: ROOM_EXPIRATION_SECONDS
+        value: "3600"
+      - key: MAX_FILE_SIZE_MB
+        value: "10240"

@@ -15,10 +15,12 @@ class SignalingClient {
     connect() {
         return new Promise((resolve, reject) => {
             try {
-                // Initialize socket connection using standard client import
-                this.socket = io({
+                // Initialize socket connection using backend URL or relative window location
+                const targetUrl = (window.BACKEND_URL && window.BACKEND_URL.startsWith('http')) ? window.BACKEND_URL : undefined;
+                this.socket = io(targetUrl, {
                     transports: ['websocket', 'polling']
                 });
+
 
                 this.socket.on('connect', () => {
                     console.log('[Signaling] Connected to Socket.IO server. SID:', this.socket.id);

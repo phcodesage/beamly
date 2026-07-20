@@ -41,5 +41,6 @@ COPY --from=css-builder /build/app/static/css/style.css ./app/static/css/style.c
 # Expose port
 EXPOSE 5001
 
-# Run with Gunicorn using eventlet worker class
-CMD ["gunicorn", "--worker-class", "eventlet", "-w", "1", "-b", "0.0.0.0:5001", "run:app"]
+# Run with Gunicorn using eventlet worker class, dynamically binding to $PORT (default 5001)
+CMD ["sh", "-c", "exec gunicorn --worker-class eventlet -w 1 -b 0.0.0.0:${PORT:-5001} run:app"]
+

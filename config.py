@@ -14,6 +14,8 @@ class Config:
     # Server details
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", "5001"))
+    BACKEND_URL: str = os.getenv("BACKEND_URL", "https://beamly-1.onrender.com")
+
     
     # WebSocket configuration
     SOCKETIO_PING_TIMEOUT: int = int(os.getenv("SOCKETIO_PING_TIMEOUT", "10"))
