@@ -17,8 +17,9 @@ class Config:
     BACKEND_URL: str = os.getenv("BACKEND_URL", "https://beamly-1.onrender.com")
 
     # Cloudflare Calls TURN Server configurations
-    CLOUDFLARE_TURN_KEY_ID: str = os.getenv("CLOUDFLARE_TURN_KEY_ID", "87b279c8b53cfedd8738bb00e4cd450c")
-    CLOUDFLARE_TURN_API_TOKEN: str = os.getenv("CLOUDFLARE_TURN_API_TOKEN", "f171b4aa6d33f18c7ca1ca2806dfad0717d2d5587bd8c89a11245d9904b78c5b")
+    CLOUDFLARE_TURN_KEY_ID: str = os.getenv("CLOUDFLARE_TURN_KEY_ID", "")
+    CLOUDFLARE_TURN_API_TOKEN: str = os.getenv("CLOUDFLARE_TURN_API_TOKEN", "")
+
 
 
     
